@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class PersonService {
     }
 
     @CachePut(cacheNames = "person", key = "#person.id")
-    public Person createPerson(final Person person) {
+    public Person savePerson(final Person person) {
         return personRepo.save(person);
     }
 

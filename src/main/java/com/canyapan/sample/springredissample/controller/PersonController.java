@@ -26,7 +26,7 @@ public class PersonController {
 
     @PostMapping
     public Long createPerson(@Valid @RequestBody Person person) {
-        return personService.createPerson(person).getId();
+        return personService.savePerson(person).getId();
     }
 
     @DeleteMapping("/{id}/")
