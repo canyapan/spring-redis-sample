@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,18 +27,22 @@ public class PersonService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    @Cacheable(cacheNames = "person")
+    @Cacheable(cacheNames = "allPersons")
     public List<Person> getAllPersons() {
         log.info("Loading all from database.");
         return personRepo.findAll();
     }
 
-    @CachePut(cacheNames = "person", key = "#person.id")
+    @Caching(
+            evict = {@CacheEvict(cacheNames = "allPersons", allEntries = true)},
+            put = {@CachePut(cacheNames = "person", key = "#person.id")})
     public Person savePerson(final Person person) {
         return personRepo.save(person);
     }
 
-    @CacheEvict(cacheNames = "person")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "allPersons", allEntries = true),
+            @CacheEvict(cacheNames = "person", key = "#id")})
     public Person deletePerson(long id) {
         Person person = getPerson(id);
         personRepo.deleteById(id);
